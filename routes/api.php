@@ -473,6 +473,7 @@ Route::middleware(["mid_res"])
             Route::delete('/users/{user_id}', 'App\Http\Controllers\Api\Admin\UserController@delete')->middleware('admin_auth', 'permission_admin');
 
             //Renters
+            Route::post('/renters', 'App\Http\Controllers\Api\Admin\RenterController@create')->middleware('user_auth', 'permission_admin');
             Route::get('/renters', 'App\Http\Controllers\Api\Admin\RenterController@getAll')->middleware('admin_auth', 'permission_admin');
             Route::get('/renters/{renter_id}', 'App\Http\Controllers\Api\Admin\RenterController@getOne')->middleware('admin_auth', 'permission_admin');
             Route::put('/renters/{renter_id}', 'App\Http\Controllers\Api\Admin\RenterController@updateUser')->middleware('admin_auth', 'permission_admin');
