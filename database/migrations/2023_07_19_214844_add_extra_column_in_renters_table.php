@@ -18,6 +18,7 @@ class AddExtraColumnInRentersTable extends Migration
             $table->timestamp('date_range')->nullable()->after('date_of_birth');
             $table->integer("sex")->default(0)->nullable()->after('date_range');
             $table->string('job')->nullable()->after('sex');
+            $table->string('type')->nullable()->after('job');
         });
     }
 
@@ -33,6 +34,7 @@ class AddExtraColumnInRentersTable extends Migration
             $table->dropColumn('date_range');
             $table->dropColumn('sex');
             $table->dropColumn('job');
+            $table->dropColumn('type');
         });
     }
 }
