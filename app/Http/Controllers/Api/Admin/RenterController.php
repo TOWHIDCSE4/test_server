@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Helper\Helper;
 use App\Helper\ParamUtils;
 use App\Helper\PhoneUtils;
+use App\Helper\RenterType;
 use App\Helper\ResponseUtils;
 use App\Helper\StatusContractDefineCode;
 use App\Helper\StatusHistoryPotentialUserDefineCode;
@@ -20,6 +21,135 @@ use Illuminate\Support\Facades\DB;
 class RenterController extends Controller
 {
     
+    /**
+     * 
+     * Thêm 1 người thuê
+     * 
+     * @bodyParam name string tên người đại diện
+     * @bodyParam phone_number string tên người đại diện
+     * @bodyParam email string tên người đại diện
+     * @bodyParam cmnd_number string tên người đại diện
+     * @bodyParam cmnd_front_image_url string tên người đại diện
+     * @bodyParam cmnd_back_image_url string tên người đại diện
+     * @bodyParam address string tên người đại diện
+     * 
+     */
+    public function createMaster(Request $request)
+    {
+        $renterExist = null;
+        $isUserExist = false;
+        $isEmailExist = false;
+        $userRenter = null;
+
+        if ($request->phone_number == null || empty($request->phone_number)) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::PHONE_NUMBER_IS_REQUIRED[0],
+                'msg' => MsgCode::PHONE_NUMBER_IS_REQUIRED[1],
+            ]);
+        }
+
+        if (!PhoneUtils::isNumberPhoneValid($request->phone_number)) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::INVALID_PHONE_NUMBER[0],
+                'msg' => MsgCode::INVALID_PHONE_NUMBER[1],
+            ]);
+        }
+
+
+        $renterExist = Renter::where([['phone_number', $request->phone_number], ['user_id', $request->user->id]])->first();
+
+
+        if ($renterExist != null && $renterExist->is_hidden == false) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::RENTER_ALREADY_EXISTS[0],
+                'msg' => MsgCode::RENTER_ALREADY_EXISTS[1],
+            ]);
+        } else if ($renterExist != null && $renterExist->is_hidden == true) {
+            $renterExist->update([
+                "name" => $request->name ?: $renterExist->name,
+                "phone_number" => $request->phone_number ?: $renterExist->phone_number,
+                "email" => $request->email ?: $renterExist->email,
+                "cmnd_number" => $request->cmnd_number ?: $renterExist->cmnd_number,
+                "cmnd_front_image_url"  => $request->cmnd_front_image_url ?: $renterExist->cmnd_front_image_url,
+                "cmnd_back_image_url" => $request->cmnd_back_image_url ?: $renterExist->cmnd_back_image_url,
+                "address" => $request->address ?: $renterExist->address,
+                "image_url" => ($request->image_url == null ? "https://data3gohomy.ikitech.vn/api/SHImages/ODLzIFikis1681367637.jpg" : $request->image_url) ?: $renterExist->image_url,
+                "address" => $request->address ?: $renterExist->address,
+                "is_hidden" => false,
+                "date_of_birth" => $request->date_of_birth ?: $renterExist->date_of_birth,
+                "date_range" => $request->date_range ?: $renterExist->date_range,
+                "sex" => $request->sex ?: $renterExist->sex,
+                "job" => $request->job ?: $renterExist->job,
+            ]);
+
+            return ResponseUtils::json([
+                'code' => Response::HTTP_OK,
+                'success' => true,
+                'msg_code' => MsgCode::SUCCESS[0],
+                'msg' => MsgCode::SUCCESS[1],
+                'data' => $renterExist,
+            ]);
+        }
+
+
+        // if (isset($request->email)) {
+        //     $isEmailExist = DB::table('renters')->where([['email', $request->email], ['user_id', $request->user->id]])->exists();
+        //     return ResponseUtils::json([
+        //         'code' => Response::HTTP_BAD_REQUEST,
+        //         'success' => false,
+        //         'msg_code' => MsgCode::EMAIL_ALREADY_EXISTS[0],
+        //         'msg' => MsgCode::EMAIL_ALREADY_EXISTS[1],
+        //     ]);
+        // }
+
+        // if (DB::table('renters')->where([['cmnd_number', $request->cmnd_number], ['user_id', $request->user->id]])->exists()) {
+        //     return ResponseUtils::json([
+        //         'code' => Response::HTTP_BAD_REQUEST,
+        //         'success' => false,
+        //         'msg_code' => MsgCode::CODE_CITIZEN_IDENTIFICATION_ALREADY_EXISTS[0],
+        //         'msg' => MsgCode::CODE_CITIZEN_IDENTIFICATION_ALREADY_EXISTS[1],
+        //     ]);
+        // }        
+        DB::beginTransaction();
+        try {
+            $renter_created = Renter::create([
+                "user_id" => $request->user->id,
+                "name" => $request->name,
+                "phone_number" => $request->phone_number,
+                "email" => $request->email,
+                "cmnd_number" => $request->cmnd_number,
+                "cmnd_front_image_url"  => $request->cmnd_front_image_url,
+                "cmnd_back_image_url" => $request->cmnd_back_image_url,
+                "image_url" => $request->image_url ?? "https://data3gohomy.ikitech.vn/api/SHImages/ODLzIFikis1681367637.jpg",
+                "address" => $request->address,
+                "date_of_birth" => $request->date_of_birth,
+                "date_range" => $request->date_range,
+                "sex" => $request->sex,
+                "job" => $request->job,
+                "type" => RenterType::MASTER,
+            ]);
+
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $renter_created,
+        ]);
+    }
     /**
      * 
      * Thêm 1 người thuê
@@ -131,6 +261,7 @@ class RenterController extends Controller
                 "date_range" => $request->date_range,
                 "sex" => $request->sex,
                 "job" => $request->job,
+                "type" => RenterType::RENTER,
             ]);
 
 
