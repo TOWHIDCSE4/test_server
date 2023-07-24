@@ -626,5 +626,17 @@ Route::middleware(["mid_res"])
             Route::get('/history_receive_commission', 'App\Http\Controllers\Api\Admin\EWalletCollaboratorController@getHistoryReceiveMoneyAdmin')->middleware('admin_auth', 'permission_admin');
 
             Route::post('/config_admins', 'App\Http\Controllers\Api\Admin\ConfigAdminController@setCurrentVersionAdmin');
+
+            /**
+             * Wallet Transaction
+             */
+            Route::post('/deposits', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletDeposit')->middleware('user_auth', 'permission_admin');
+            Route::get('/deposits', 'App\Http\Controllers\Api\Admin\WalletTransactionController@GetAllWalletDeposit')->middleware('user_auth', 'permission_admin');
+            // Route::PUT('/deposits', 'App\Http\Controllers\Api\Admin\WalletTransactionController@EditWalletDeposit')->middleware('user_auth', 'permission_admin');
+
+            // Wallet withdrows  
+            Route::post('/withdraws', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletWithdraws')->middleware('user_auth', 'permission_admin');
+            Route::get('/withdraws', 'App\Http\Controllers\Api\Admin\WalletTransactionController@GetAllWalletWithdraws')->middleware('user_auth', 'permission_admin');
+            // Route::PUT('/withdrows/{wallet_transaction_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@EditWalletWithdrows')->middleware('user_auth', 'permission_admin');
         });
     });

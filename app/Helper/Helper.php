@@ -6,6 +6,7 @@ use App\Models\MsgCode;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Str;
 
 class Helper
 {
@@ -220,4 +221,27 @@ class Helper
             return number_format($number, 0, ',', '.') . "{$suffix}";
         }
     }
+
+    
+    static function generateTransactionID()
+    {
+        $prefix = 'TXN'; // Customize this to your organization/application
+        $prefixLength = 2;
+        $uniqueStringLength = 5;
+        
+        // Generate a random unique string (alphanumeric, uppercase)
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $prefix = Str::random($prefixLength, $characters);
+        $uniqueString = Str::random($uniqueStringLength, $characters);
+        
+        // Get the current timestamp (Unix timestamp)
+        $timestamp = time();
+        
+        // Combine the prefix, timestamp, and unique string to form the transaction ID
+        $transactionID = strtoupper($prefix) . $timestamp . strtoupper($uniqueString);
+        
+        return $transactionID;
+    }
+
+
 }
