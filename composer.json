@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.1.3 |^8.0",
         "ext-json": "*",
         "ajcastro/searchable": "^1.5",
         "arcanedev/log-viewer": "^8.3",
@@ -23,7 +23,6 @@
         "laravel/telescope": "^4.4",
         "laravel/tinker": "^2.5",
         "mpociot/documentarian": "dev-master as 0.4.0",
-        "mpociot/laravel-apidoc-generator": "dev-master",
         "nicolaslopezj/searchable": "^1.13",
         "predis/predis": "^1.1"
     },

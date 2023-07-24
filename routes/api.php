@@ -628,3 +628,8 @@ Route::middleware(["mid_res"])
             Route::post('/config_admins', 'App\Http\Controllers\Api\Admin\ConfigAdminController@setCurrentVersionAdmin');
         });
     });
+
+//Deposit 
+Route::post('deposit', 'App\Http\Controllers\Api\DepositController@index');
+
+//Withdrow
