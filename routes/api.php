@@ -626,6 +626,21 @@ Route::middleware(["mid_res"])
             Route::get('/history_receive_commission', 'App\Http\Controllers\Api\Admin\EWalletCollaboratorController@getHistoryReceiveMoneyAdmin')->middleware('admin_auth', 'permission_admin');
 
             Route::post('/config_admins', 'App\Http\Controllers\Api\Admin\ConfigAdminController@setCurrentVersionAdmin');
+
+            // Wallet Deposit
+            Route::post('/deposits', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletDeposit')->middleware('user_auth', 'permission_admin');
+            Route::get('/deposits', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletDeposit')->middleware('user_auth', 'permission_admin');
+            Route::PUT('/deposits', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editWalletDeposit')->middleware('user_auth', 'permission_admin');
+
+            // Wallet withdrows  
+            Route::post('/withdrows', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletWithdrows')->middleware('user_auth', 'permission_admin');
+            Route::get('/withdrows', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletWithdrows')->middleware('user_auth', 'permission_admin');
+            Route::PUT('/withdrows/{wallet_transaction_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editWalletWithdrows')->middleware('user_auth', 'permission_admin');
+
+            // Wallet Bank  
+            Route::post('/walletBankLists', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletBank')->middleware('user_auth', 'permission_admin');
+            Route::get('/walletBankLists', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletBank')->middleware('user_auth', 'permission_admin');
+            Route::PUT('/walletBankLists/{wallet_transaction_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editWalletBank')->middleware('user_auth', 'permission_admin');
         });
     });
 
