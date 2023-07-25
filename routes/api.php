@@ -640,5 +640,6 @@ Route::middleware(["mid_res"])
             // Route::PUT('/withdrows/{wallet_transaction_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@EditWalletWithdrows')->middleware('user_auth', 'permission_admin');
 
             Route::post('/confirm-payment-status', 'App\Http\Controllers\Api\Admin\WallentTransactionAdminReviewController@confirmPaymentStatusAdmin')->middleware('user_auth', 'permission_admin');
+            Route::get('/wallet-data-for-graph', 'App\Http\Controllers\Api\Admin\WallentTransactionAdminReviewController@getWalletDataForGraph')->middleware('user_auth', 'permission_admin');
         });
     });
