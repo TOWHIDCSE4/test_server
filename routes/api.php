@@ -638,5 +638,7 @@ Route::middleware(["mid_res"])
             Route::post('/withdraws', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletWithdraws')->middleware('user_auth', 'permission_admin');
             Route::get('/withdraws', 'App\Http\Controllers\Api\Admin\WalletTransactionController@GetAllWalletWithdraws')->middleware('user_auth', 'permission_admin');
             // Route::PUT('/withdrows/{wallet_transaction_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@EditWalletWithdrows')->middleware('user_auth', 'permission_admin');
+
+            Route::post('/confirm-payment-status', 'App\Http\Controllers\Api\Admin\WallentTransactionAdminReviewController@confirmPaymentStatusAdmin')->middleware('user_auth', 'permission_admin');
         });
     });

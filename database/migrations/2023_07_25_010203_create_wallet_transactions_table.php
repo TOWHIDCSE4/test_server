@@ -20,7 +20,6 @@ class CreateWalletTransactionsTable extends Migration
             $table->string('account_number')->nullable();
             $table->string('bank_account_holder_name')->nullable();
             $table->string('bank_name')->nullable();
-            $table->float('rest_money')->default(0);
             $table->integer('otp_code')->nullable();
             // Deposit 
             $table->float('deposit_money')->default(0);
@@ -32,6 +31,9 @@ class CreateWalletTransactionsTable extends Migration
             $table->string('withdraw_trading_code')->nullable();
             $table->timestamp('withdraw_date_time')->nullable();
             $table->string('withdraw_content')->nullable();
+            $table->float('bonus')->default(0);
+            $table->tinyInteger('type');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

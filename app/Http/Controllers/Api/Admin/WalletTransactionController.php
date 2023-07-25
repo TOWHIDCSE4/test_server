@@ -10,16 +10,94 @@ use App\Helper\StatusContractDefineCode;
 use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
 use App\Models\WalletTransaction;
-use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class WalletTransactionController extends Controller
 {
     
+    //getAllWalletDeposit
+    public function  getAllWalletDeposit()
+    {
+        $deposits = WalletTransaction::select(
+            'user_id',
+            'deposit_money', 
+            'account_number', 
+            'bank_account_holder_name', 
+            'bank_name',
+            'deposit_trading_code', 
+            'deposit_date_time', 
+            'deposit_content')->get();
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $deposits,
+        ], 200);
+    }
+
+    // editWalletDeposit
+    public function  editWalletDeposit(Request $request)
+    {
+
+        $this->validate($request, [
+            'deposit_money' => 'required',
+            'deposit_trading_code' => 'required',
+        ]);
+
+        try {
+            $wallet = WalletTransaction::findOrFail($request->id);
+            DB::beginTransaction();
+            $response = $wallet->update([
+                // "user_id" => $request->user->id,
+                "account_number" => $request->account_number,
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
+                "deposit_money" => $request->deposit_money,
+                "deposit_trading_code" => Helper::generateTransactionID(),
+                "deposit_date_time" => Helper::getTimeNowString(),
+                "deposit_content" => $request->deposit_content ?? null,
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+        }
+
+
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $response,
+        ]);
+    }
+
+    //getAllWalletWithdraws
+    public function  getAllWalletWithdraws()
+    {
+        $deposits = WalletTransaction::select(
+            'user_id',
+            'withdraw_money', 
+            'account_number', 
+            'bank_account_holder_name', 
+            'bank_name',
+            
+            'withdraw_trading_code', 
+            'withdraw_date_time', 
+            'withdraw_content')->get();
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $deposits,
+        ], 200);
+    }
+
     public function createWalletDeposit(Request $request)
     {
         if ($request->deposit_money == null || empty($request->deposit_money)) {
@@ -42,6 +120,7 @@ class WalletTransactionController extends Controller
                 "deposit_trading_code" => Helper::generateTransactionID(),
                 "deposit_date_time" => Helper::getTimeNowString(),
                 "deposit_content" => $request->deposit_content ?? null,
+                "type" => WalletTransaction::DEPOSIT,
             ]);
 
 
@@ -83,6 +162,7 @@ class WalletTransactionController extends Controller
                 "withdraw_trading_code" => Helper::generateTransactionID(),
                 "withdraw_date_time" => Helper::getTimeNowString(),
                 "withdraw_content" => $request->withdraw_content ?? null,
+                "type" => WalletTransaction::WITHDRAW,
             ]);
 
 

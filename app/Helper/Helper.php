@@ -225,13 +225,13 @@ class Helper
     
     static function generateTransactionID()
     {
-        $prefix = 'TXN'; // Customize this to your organization/application
         $prefixLength = 2;
         $uniqueStringLength = 5;
         
         // Generate a random unique string (alphanumeric, uppercase)
+        $prefixCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $prefix = Str::random($prefixLength, $characters);
+        $prefix = Str::random($prefixLength, $prefixCharacters);
         $uniqueString = Str::random($uniqueStringLength, $characters);
         
         // Get the current timestamp (Unix timestamp)

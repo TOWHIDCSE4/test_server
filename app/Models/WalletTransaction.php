@@ -14,6 +14,11 @@ class WalletTransaction extends BaseModel
 
     protected $guarded = [];
 
+    public const DEPOSIT = 1;
+    public const WITHDRAW = 2;
+
+    public const COMPLETED = 1;
+
     protected $casts = [];
 
     protected $searchable = [
