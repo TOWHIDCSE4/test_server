@@ -2,21 +2,36 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Helper\Helper;
+use App\Helper\ParamUtils;
+use App\Helper\RenterType;
 use App\Helper\ResponseUtils;
-use App\Models\WalletTransaction;
+use App\Helper\StatusContractDefineCode;
+use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
-use Illuminate\Http\Response;
+use App\Models\WalletTransaction;
+use DateTime;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
-class DepositController extends Controller
+class WalletTransactionController extends Controller
 {
-
-    // Wallet Deposit
-
+    //getAllWalletDeposit
     public function  getAllWalletDeposit()
     {
-        $deposits = WalletTransaction::select('deposit_money', 'deposit_trading_code', 'deposit_date_time', 'deposit_content')->get();
+        $deposits = WalletTransaction::select(
+            'user_id',
+            'deposit_money',
+            'account_number',
+            'bank_account_holder_name',
+            'bank_name',
+            'deposit_trading_code',
+            'deposit_date_time',
+            'deposit_content'
+        )->get();
         return response()->json([
             'code' => 200,
             'success' => true,
@@ -26,59 +41,85 @@ class DepositController extends Controller
         ], 200);
     }
 
-    public function  createWalletDeposit(Request $request)
+    ///createWalletDeposit
+    public function createWalletDeposit(Request $request)
     {
-
-        $this->validate($request, [
-            'deposit_money' => 'required',
-            'deposit_trading_code' => 'required',
-        ]);
-
-        try {
-            DB::beginTransaction();
-            $response = WalletTransaction::create([
-                "user_id" => $request->user_id,
-                "deposit_money"  => $request->deposit_money,
-                "deposit_trading_code" => $request->deposit_trading_code,
-                "deposit_date_time" => $request->deposit_date_time,
-                "deposit_content" => $request->deposit_content,
+        if ($request->deposit_money == null || empty($request->deposit_money)) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::DEPOSIT_MONEY_IS_REQUIRED[0],
+                'msg' => MsgCode::DEPOSIT_MONEY_IS_REQUIRED[1],
             ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
         }
 
+        DB::beginTransaction();
+        try {
+            $wallet_transaction_created = WalletTransaction::create([
+                "user_id" => $request->user->id,
+                "account_number" => $request->account_number,
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
+                "deposit_money" => $request->deposit_money,
+                "deposit_trading_code" => Helper::generateTransactionID(),
+                "deposit_date_time" => Helper::getTimeNowString(),
+                "deposit_content" => $request->deposit_content ?? null,
+            ]);
+
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
 
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
-            'data' => $response,
+            'data' => $wallet_transaction_created,
         ]);
     }
 
+    /// editWalletDeposit
     public function  editWalletDeposit(Request $request)
     {
 
+        if ($request->walletId == null || empty($request->deposit_money)) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[0],
+                'msg' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[1],
+            ]);
+        }
+
         $this->validate($request, [
             'deposit_money' => 'required',
-            'deposit_trading_code' => 'required',
+            'bank_name' => 'required',
         ]);
 
+        $wallet = WalletTransaction::findOrFail($request->id);
+        if ($wallet == null || empty($wallet)) {
+            return response()->json('Wallet not found');
+        }
+
+        DB::beginTransaction();
         try {
-            $wallet = WalletTransaction::findOrFail($request->id);
-            DB::beginTransaction();
             $response = $wallet->update([
-                "user_id" => $request->user_id,
-                "deposit_money"  => $request->deposit_money,
-                "deposit_trading_code" => $request->deposit_trading_code,
-                "deposit_date_time" => $request->deposit_date_time,
-                "deposit_content" => $request->deposit_content,
+                "account_number" => $request->account_number,
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
+                "deposit_money" => $request->deposit_money,
+                "deposit_trading_code" => Helper::generateTransactionID(),
+                "deposit_date_time" => Helper::getTimeNowString(),
+                "deposit_content" => $request->deposit_content ?? null,
             ]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+            throw new Exception($e->getMessage());
         }
 
 
@@ -87,14 +128,24 @@ class DepositController extends Controller
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
-            'data' => $response,
+            'data' => $wallet,
         ]);
     }
 
-    // Wallet withdrow 
-    public function  getAllWalletWithdrow()
+    ///getAllWalletWithdraws
+    public function  getAllWalletWithdraws()
     {
-        $deposits = WalletTransaction::select('withdraw_money', 'withdraw_trading_code', 'withdraw_date_time', 'withdraw_content')->get();
+        $deposits = WalletTransaction::select(
+            'user_id',
+            'withdraw_money',
+            'account_number',
+            'bank_account_holder_name',
+            'bank_name',
+
+            'withdraw_trading_code',
+            'withdraw_date_time',
+            'withdraw_content'
+        )->get();
         return response()->json([
             'code' => 200,
             'success' => true,
@@ -104,152 +155,88 @@ class DepositController extends Controller
         ], 200);
     }
 
-    public function  createWalletWithdrow(Request $request)
+    public function createWalletWithdraws(Request $request)
     {
-
-        $this->validate($request, [
-            'withdraw_money' => 'required',
-            'user_id' => 'required',
-            'withdraw_trading_code' => 'required'
-        ]);
-
-        try {
-            DB::beginTransaction();
-            $response = WalletTransaction::create([
-                "user_id" => $request->user_id,
-                "withdraw_money"  => $request->withdraw_money,
-                "withdraw_trading_code" => $request->withdraw_trading_code,
-                "withdraw_date_time" => $request->withdraw_date_time,
-                "withdraw_content" => $request->withdraw_content,
+        if ($request->withdraw_money == null || empty($request->withdraw_money)) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[0],
+                'msg' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[1],
             ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
         }
 
-
-        return ResponseUtils::json([
-            'code' => Response::HTTP_OK,
-            'success' => true,
-            'msg_code' => MsgCode::SUCCESS[0],
-            'msg' => MsgCode::SUCCESS[1],
-            'data' => $response,
-        ]);
-    }
-
-    public function  editWalletWithdrow(Request $request, $id)
-    {
-
-        $this->validate($request, [
-            'amount' => 'required',
-            'user_id' => 'required',
-            'account_number' => 'required'
-        ]);
-
+        DB::beginTransaction();
         try {
-            $wallet = WalletTransaction::findOrFail($id);
-            DB::beginTransaction();
-            $response = $wallet->update([
-                "user_id" => $request->user_id,
-                "withdraw_money"  => $request->withdraw_money,
-                "withdraw_trading_code" => $request->withdraw_trading_code,
-                "withdraw_date_time" => $request->withdraw_date_time,
-                "withdraw_content" => $request->withdraw_content,
-            ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-        }
-
-
-        return ResponseUtils::json([
-            'code' => Response::HTTP_OK,
-            'success' => true,
-            'msg_code' => MsgCode::SUCCESS[0],
-            'msg' => MsgCode::SUCCESS[1],
-            'data' => $response,
-        ]);
-    }
-
-    // Bank information
-    public function  getAllWalletBankList()
-    {
-        $deposits = WalletTransaction::select('account_number', 'bank_account_holder_name', 'bank_name', 'rest_money', 'otp_code')->get();
-        return response()->json([
-            'code' => 200,
-            'success' => true,
-            'msg_code' => MsgCode::SUCCESS[0],
-            'msg' => MsgCode::SUCCESS[1],
-            'data' => $deposits,
-        ], 200);
-    }
-
-    public function  createWalletBank(Request $request)
-    {
-
-        $this->validate($request, [
-            'account_number' => 'required',
-            'user_id' => 'required',
-            'bank_account_holder_name' => 'required'
-        ]);
-
-        try {
-            DB::beginTransaction();
-            $response = WalletTransaction::create([
-                "user_id" => $request->user_id,
-                "bank_name"  => $request->bank_name,
-                "bank_account_holder_name" => $request->bank_account_holder_name,
-                "rest_money" => $request->rest_money,
+            $wallet_transaction_created = WalletTransaction::create([
+                "user_id" => $request->user->id,
                 "account_number" => $request->account_number,
-                "otp_code" => $request->otp_code,
-            ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-        }
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
 
+                "withdraw_money" => $request->withdraw_money,
+                "withdraw_trading_code" => Helper::generateTransactionID(),
+                "withdraw_date_time" => Helper::getTimeNowString(),
+                "withdraw_content" => $request->withdraw_content ?? null,
+            ]);
+
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
 
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
-            'data' => $response,
+            'data' => $wallet_transaction_created,
         ]);
     }
 
-    public function  editWalletBank(Request $request, $id)
+    public function editWalletWithdrows(Request $request, $walletTransactionId)
     {
-
-        $this->validate($request, [
-            'account_number' => 'required',
-            'user_id' => 'required',
-            'bank_account_holder_name' => 'required'
-        ]);
-
-        try {
-            $bankInfo =  WalletTransaction::findOrFail($id);
-            DB::beginTransaction();
-            $response =  $bankInfo->update([
-                "user_id" => $request->user_id,
-                "bank_name"  => $request->bank_name,
-                "bank_account_holder_name" => $request->bank_account_holder_name,
-                "rest_money" => $request->rest_money,
-                "account_number" => $request->account_number,
-                "otp_code" => $request->otp_code,
+        if ($request->walletTransactionId == null || empty($request->walletTransactionId)) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[0],
+                'msg' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[1],
             ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
         }
 
+        $wallet = WalletTransaction::findOrFail($walletTransactionId);
+        if ($wallet == null || empty($wallet)) {
+            return response()->json('Wallet not found');
+        }
+
+        DB::beginTransaction();
+        try {
+            $wallet_transaction = $wallet->update([
+                "user_id" => $request->user->id,
+                "account_number" => $request->account_number,
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
+                "withdraw_money" => $request->withdraw_money,
+                "withdraw_trading_code" => Helper::generateTransactionID(),
+                "withdraw_date_time" => Helper::getTimeNowString(),
+                "withdraw_content" => $request->withdraw_content ?? null,
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
 
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
-            'data' => $response,
+            'data' => $wallet_transaction,
         ]);
     }
 }
