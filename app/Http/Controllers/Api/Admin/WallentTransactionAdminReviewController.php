@@ -19,6 +19,11 @@ use Illuminate\Support\Str;
 
 class WalletTransactionController extends Controller
 {
+
+     public function getAllBankList()  {
+        
+    }
+
     //ComfirmStatusPaymentAdmin
     public function comfirmStatusPaymentAdmin()
     {

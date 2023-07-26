@@ -641,9 +641,12 @@ Route::middleware(["mid_res"])
             Route::post('/walletBankLists', 'App\Http\Controllers\Api\Admin\WalletTransactionController@createWalletBank')->middleware('user_auth', 'permission_admin');
             Route::get('/walletBankLists', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletBank')->middleware('user_auth', 'permission_admin');
             Route::PUT('/walletBankLists/{wallet_transaction_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editWalletBank')->middleware('user_auth', 'permission_admin');
-        
+
             Route::post('/ ComfirmStatusPaymentAdmin', 'App\Http\Controllers\Api\Admin\WallentTransactionAdminReviewController@comfirmStatusPaymentAdmin')->middleware('user_auth', 'permission_admin');
             Route::get('/getAdmin_Review', 'App\Http\Controllers\Api\Admin\WallentTransactionAdminReviewController@getAdminReview')->middleware('user_auth', 'permission_admin');
+
+            // Route for Wallet Transaction Bank List
+            Route::get('/getWalletTransactionBankList', 'App\Http\Controllers\Api\Admin\WalletTransactionBankListController@getAllBankList')->middleware('user_auth', 'permission_admin');
         });
     });
 
