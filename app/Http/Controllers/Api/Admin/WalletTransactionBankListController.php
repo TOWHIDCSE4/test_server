@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
 use App\Models\WalletTransactionBankList;
 
-class WalletTransactionController extends Controller
+class WalletTransactionBankListController extends Controller
 {
 
     public function getAllBankList()
@@ -15,8 +15,7 @@ class WalletTransactionController extends Controller
         return response()->json([
             'code' => 200,
             'success' => true,
-            'msg_code' => MsgCode::SUCCESS[0],
-            'msg' => MsgCode::SUCCESS[1],
+            'msg' => "Success data fetch",
             'data' => $bankList,
         ], 200);
     }
