@@ -198,7 +198,7 @@ class WalletTransactionController extends Controller
 
     public function editWalletWithdrows(Request $request, $walletTransactionId)
     {
-        if ($request->walletTransactionId == null || empty($request->walletTransactionId)) {
+        if ($walletTransactionId == null || empty($walletTransactionId)) {
             return response()->json("Wallet not found");
         }
 
