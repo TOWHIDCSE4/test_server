@@ -199,12 +199,7 @@ class WalletTransactionController extends Controller
     public function editWalletWithdrows(Request $request, $walletTransactionId)
     {
         if ($request->walletTransactionId == null || empty($request->walletTransactionId)) {
-            return ResponseUtils::json([
-                'code' => Response::HTTP_BAD_REQUEST,
-                'success' => false,
-                'msg_code' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[0],
-                'msg' => MsgCode::WITHDRAW_MONEY_IS_REQUIRED[1],
-            ]);
+            return response()->json("Wallet not found");
         }
 
         $wallet = WalletTransaction::findOrFail($walletTransactionId);

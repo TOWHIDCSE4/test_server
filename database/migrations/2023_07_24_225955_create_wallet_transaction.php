@@ -32,6 +32,10 @@ class CreateWalletTransaction extends Migration
             $table->string('withdraw_trading_code');
             $table->timestamp('withdraw_date_time');
             $table->string('withdraw_content')->nullable();
+
+            $table->integer('total_golden_coin')->nullable();
+            $table->integer('total_silver_coin')->nullable();
+            $table->integer('status')->nullable()->comment('10 = paid, 20 =complete, 30= unpaid, 40 = incomplete');
             $table->timestamps();
         });
     }
