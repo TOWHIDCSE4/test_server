@@ -24,6 +24,7 @@ class CreateWalletTransactionBankListsTable extends Migration
             $table->integer('atmBin')->nullable();
             $table->integer('cardLength')->nullable();
             $table->integer('bankCode')->nullable();
+            $table->string('bank_icon')->nullable();
             $table->tinyInteger('type');
             $table->tinyInteger('napasSupported');
             $table->tinyInteger('status')->default(0);
