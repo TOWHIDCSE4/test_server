@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         'App\Console\Commands\EveryMinuteCommand',
         'App\Console\Commands\EveryDayCommand',
+        'App\Console\Commands\PostStatusUpdateCommand',
     ];
 
     /**
@@ -28,6 +29,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('command:every_minute')->everyMinute();
         $schedule->command('command:every_day')->dailyAt('09:00');
+        $schedule->command('post:update')->everyMinute();
     }
 
     /**
