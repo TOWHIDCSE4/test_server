@@ -167,4 +167,28 @@ class TowerMotelController extends Controller
             'data' => $towerExists,
         ]);
     }
+
+    public function updateTowerByRoom(Request $request)
+    {
+        $TowerMotel_is_room = TowerMotel::where('id', $request->tower_id)->first();
+        if ($TowerMotel_is_room == null) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => MsgCode::NO_CATEGORY_SERVICE_SELL_EXISTS[0],
+                'msg' => MsgCode::NO_CATEGORY_SERVICE_SELL_EXISTS[1],
+            ]);
+        }
+
+        $TowerMotel_is_room->update([
+            'is_room' => $request->is_room != null ? $request->is_room : $TowerMotel_is_room->is_room,
+        ]);
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $TowerMotel_is_room,
+        ]);
+    }
 }
