@@ -647,6 +647,8 @@ Route::middleware(["mid_res"])
 
             // Route for Wallet Transaction Bank List
             Route::get('/getWalletTransactionBankList', 'App\Http\Controllers\Api\Admin\WalletTransactionBankListController@getAllBankList')->middleware('user_auth', 'permission_admin');
+
+            Route::get('/getAllTower/{userId}', 'App\Http\Controllers\Api\User\Manage\TowerController@getUserWiseAllTower')->middleware('user_auth', 'permission_admin');
         });
     });
 

@@ -1011,4 +1011,16 @@ class TowerController extends Controller
             'data' => ['idDeleted' => $idDeleted],
         ]);
     }
+
+    public function getUserWiseAllTower($userId)
+    {
+        $towers = Tower::where('user_id', $userId)->get();
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'msg_code' => 'SUCCESS',
+            'msg' => "Tower list",
+            'data' => $towers,
+        ]);
+    }
 }
