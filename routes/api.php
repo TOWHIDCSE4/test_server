@@ -657,3 +657,9 @@ Route::middleware(["mid_res"])
 Route::post('deposit', 'App\Http\Controllers\Api\DepositController@index');
 
 //Withdrow
+
+Route::post('/refunds-create');
+Route::get('get/invoice/inquire');
+Route::post('/payments-create');
+Route::post('/inquire');
+Route::get('/result');
