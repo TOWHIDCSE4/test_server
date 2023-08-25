@@ -1014,7 +1014,8 @@ class TowerController extends Controller
 
     public function getUserWiseAllTower($userId)
     {
-        $towers = Tower::where('user_id', $userId)->get();
+        $limit = request()->limit ?: 20;
+        $towers = Tower::where('user_id', $userId)->paginate($limit);
         return response()->json([
             'code' => 200,
             'success' => true,
