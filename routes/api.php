@@ -658,8 +658,8 @@ Route::post('deposit', 'App\Http\Controllers\Api\DepositController@index');
 
 //Withdrow
 
-Route::post('/refunds-create');
-Route::get('get/invoice/inquire');
-Route::post('/payments-create');
-Route::post('/inquire');
-Route::get('/result');
+Route::post('/refunds-create' ,'App\Http\Controllers\Api\PaymentMethod\NinePayController@refundCreate');
+Route::get('get/invoice/inquire','App\Http\Controllers\Api\PaymentMethod\NinePayController@invoiceInquire');
+Route::post('/payments-create','App\Http\Controllers\Api\PaymentMethod\NinePayController@paymentCreate');
+Route::post('/inquire','App\Http\Controllers\Api\PaymentMethod\NinePayController@inquire');
+Route::get('/result','App\Http\Controllers\Api\PaymentMethod\NinePayController@result');
