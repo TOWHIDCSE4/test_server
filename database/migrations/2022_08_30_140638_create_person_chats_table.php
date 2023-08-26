@@ -22,6 +22,7 @@ class CreatePersonChatsTable extends Migration
                 $table->unsignedBigInteger('to_user_id')->unsigned()->index();
                 $table->foreign('to_user_id')->references('id')->on('users')->cascadeOnDelete();
                 $table->longText('last_mess')->nullable();
+                $table->tinyInteger('is_my_last_message')->nullable();
                 $table->boolean('seen')->default(false)->nullable();
 
                 $table->timestamps();

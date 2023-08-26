@@ -205,4 +205,16 @@ class AdminMessageController extends Controller
             'data' => $mess
         ]);
     }
+
+    public function getLatestMessage(){
+        $mess = PersonChats::where('is_my_last_message', true)->get();
+
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'success' => true,
+            'data' => $mess
+        ]);
+    }
 }
