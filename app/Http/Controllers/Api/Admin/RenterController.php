@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class RenterController extends Controller
 {
-    
+
     /**
      * 
      * Thêm 1 người thuê
@@ -279,7 +279,7 @@ class RenterController extends Controller
             'data' => $renter_created,
         ]);
     }
-    
+
     /**
      * 
      * Danh sách user
@@ -529,6 +529,30 @@ class RenterController extends Controller
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
+        ]);
+    }
+
+    public function getRenterByUserid($userId)
+    {
+        $renters = Renter::where("user_id", $userId)->get();
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $renters
+        ]);
+    }
+
+    public function getMasterByUserid($userId)
+    {
+        $masters = Renter::where(["type" => RenterType::MASTER, "user_id" => $userId])->get();
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $masters
         ]);
     }
 }

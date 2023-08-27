@@ -652,6 +652,8 @@ Route::middleware(["mid_res"])
             Route::post('/update-towetmotel-byroom', 'App\Http\Controllers\Api\User\Manage\TowerMotelController@updateTowerByRoom')->middleware('user_auth', 'permission_admin');
            
             Route::post('/user/community/person_chat', 'App\Http\Controllers\Api\Admin\AdminMessageController@getLatestMessage')->middleware('user_auth', 'permission_admin');
+            Route::get('/getRenterByUserid/{userId}', 'App\Http\Controllers\Api\Admin\RenterController@getRenterByUserid')->middleware('user_auth', 'permission_admin');
+            Route::get('/getMasterByUserid/{userId}', 'App\Http\Controllers\Api\Admin\RenterController@getMasterByUserid')->middleware('user_auth', 'permission_admin');
         });
     });
 
