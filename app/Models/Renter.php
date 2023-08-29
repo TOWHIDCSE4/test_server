@@ -37,6 +37,11 @@ class Renter extends BaseModel
         return Motel::where('id', $this->motel_id)->first();
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function getBillAttribute()
     {
         $bill = Bill::join('user_contracts', 'bills.contract_id', '=', 'user_contracts.contract_id')

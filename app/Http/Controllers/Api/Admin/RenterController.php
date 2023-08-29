@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
 use App\Models\PotentialUser;
 use App\Models\Renter;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -534,7 +535,7 @@ class RenterController extends Controller
 
     public function getRenterByUserid($userId)
     {
-        $renters = Renter::where("user_id", $userId)->get();
+        $renters = Renter::with('user')->where(["is_host" => 0, 'user_id' => $userId])->get();
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
@@ -546,7 +547,7 @@ class RenterController extends Controller
 
     public function getMasterByUserid($userId)
     {
-        $masters = Renter::where(["type" => RenterType::MASTER, "user_id" => $userId])->get();
+        $masters = Renter::with("user")->where(["is_host" => 1, 'user_id' => $userId])->get();
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
