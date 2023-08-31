@@ -259,7 +259,8 @@ class MotelPostController extends Controller
                 'msg' => MsgCode::NO_POST_EXISTS[1],
             ]);
         }
-
+        $modelPostExists->phone_number = $request->phone_number;
+        $modelPostExists->save();
         if ($request->status != null) {
             if (StatusMoPostDefineCode::getStatusMoPostCode($request->status) == null) {
                 return ResponseUtils::json([
