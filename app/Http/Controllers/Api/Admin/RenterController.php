@@ -535,25 +535,25 @@ class RenterController extends Controller
 
     public function getRenterByUserid($userId)
     {
-        $renters = Renter::with('user')->where(["is_host" => 0, 'user_id' => $userId])->get();
+        $renter = Renter::with('user')->where(["is_host" => 0, 'user_id' => $userId])->first();
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
-            'data' => $renters
+            'data' => $renter
         ]);
     }
 
     public function getMasterByUserid($userId)
     {
-        $masters = Renter::with("user")->where(["is_host" => 1, 'user_id' => $userId])->get();
+        $master = Renter::with("user")->where(["is_host" => 1, 'user_id' => $userId])->first();
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
-            'data' => $masters
+            'data' => $master
         ]);
     }
 }
