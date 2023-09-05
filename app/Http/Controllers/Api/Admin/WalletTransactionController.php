@@ -10,6 +10,7 @@ use App\Helper\StatusContractDefineCode;
 use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
 use App\Models\WalletTransaction;
+use App\Models\WalletTransactionBankList;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -203,6 +204,75 @@ class WalletTransactionController extends Controller
         }
 
         $wallet = WalletTransaction::findOrFail($walletTransactionId);
+        if ($wallet == null || empty($wallet)) {
+            return response()->json('Wallet not found');
+        }
+
+        DB::beginTransaction();
+        try {
+            $wallet_transaction = $wallet->update([
+                "user_id" => $request->user->id,
+                "account_number" => $request->account_number,
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
+                "withdraw_money" => $request->withdraw_money,
+                "withdraw_trading_code" => Helper::generateTransactionID(),
+                "withdraw_date_time" => Helper::getTimeNowString(),
+                "withdraw_content" => $request->withdraw_content ?? null,
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $wallet_transaction,
+        ]);
+    }
+    public function addBank(Request $request)
+    {
+
+
+        DB::beginTransaction();
+        try {
+            $wallet_transaction = WalletTransactionBankList::create([
+                "user_id" => $request->user->id,
+                "account_number" => $request->account_number,
+                "bank_account_holder_name" => $request->bank_account_holder_name,
+                "bank_name" => $request->bank_name,
+                "withdraw_money" => $request->withdraw_money,
+                "withdraw_trading_code" => Helper::generateTransactionID(),
+                "withdraw_date_time" => Helper::getTimeNowString(),
+                "withdraw_content" => $request->withdraw_content ?? null,
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $wallet_transaction,
+        ]);
+    }
+    public function editBank(Request $request, $bankId)
+    {
+        if ($bankId == null || empty($bankId)) {
+            return response()->json("Wallet not found");
+        }
+
+        $wallet = WalletTransactionBankList::findOrFail($bankId);
         if ($wallet == null || empty($wallet)) {
             return response()->json('Wallet not found');
         }

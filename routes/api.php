@@ -654,6 +654,9 @@ Route::middleware(["mid_res"])
             Route::post('/user/community/person_chat', 'App\Http\Controllers\Api\Admin\AdminMessageController@getLatestMessage')->middleware('user_auth', 'permission_admin');
             Route::get('/getRenterByUserid/{userId}', 'App\Http\Controllers\Api\Admin\RenterController@getRenterByUserid')->middleware('user_auth', 'permission_admin');
             Route::get('/getMasterByUserid/{userId}', 'App\Http\Controllers\Api\Admin\RenterController@getMasterByUserid')->middleware('user_auth', 'permission_admin');
+           
+            Route::post('/addBank', 'App\Http\Controllers\Api\Admin\WalletTransactionController@addBank')->middleware('user_auth', 'permission_admin');
+            Route::get('/editBank/{bankId}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editBank')->middleware('user_auth', 'permission_admin');
         });
     });
 
