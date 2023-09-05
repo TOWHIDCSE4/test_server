@@ -117,6 +117,10 @@ class UserMessageController extends Controller
             ->distinct()
             ->pluck('person_chats.user_id')->toArray();
 
+        $is_my_last_message = PersonChats::where('user_id', $request->user_id)->orWhere(function ($q, $request) {
+            $q->where('to_user_id', $request->user_id);
+        })->with(['user'])->orderBy('last_mess', "DESC")->get();
+        
         $listPerson = PersonChats::where('user_id', $request->user->id)
             ->where('is_helper', false)
             ->whereNotIn('person_chats.to_user_id', $arrMyHost)
@@ -133,7 +137,8 @@ class UserMessageController extends Controller
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
             'success' => true,
-            'data' => $listPerson
+            'data' => $listPerson,
+            'last_message' => $is_my_last_message
         ]);
     }
     /** 
