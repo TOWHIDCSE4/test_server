@@ -657,6 +657,10 @@ Route::middleware(["mid_res"])
            
             Route::post('/addBank', 'App\Http\Controllers\Api\Admin\WalletTransactionController@addBank')->middleware('user_auth', 'permission_admin');
             Route::get('/editBank/{bankId}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editBank')->middleware('user_auth', 'permission_admin');
+        
+            Route::post('/addBank', 'App\Http\Controllers\BankController@addBank')->middleware('user_auth');
+            Route::put('/editBankInfo/{bankId}', 'App\Http\Controllers\BankController@update')->middleware('user_auth');
+            Route::get('/getUserBankListbyUserId/{user_id}', 'App\Http\Controllers\BankController@getUserBankListbyUserId')->middleware('user_auth');
         });
     });
 
