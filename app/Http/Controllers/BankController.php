@@ -38,9 +38,10 @@ class BankController extends Controller
     }
 
     //Get bank list by user id
-    public function getUserBankListbyUserId(Request $request,$user_id) {
+    public function getUserBankListbyUserId(Request $request, $user_id)
+    {
         $userBankList = Bank::orderBy('updated_at', 'desc')
-        ->where('user_id', $user_id)->paginate($request->limit);
+            ->where('user_id', $user_id)->paginate($request->limit);
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
             'success' => true,
@@ -49,7 +50,7 @@ class BankController extends Controller
             'data' => $userBankList,
         ]);
     }
-  // add bank 
+    // add bank 
     public function addBank(Request $request)
     {
         DB::beginTransaction();
@@ -77,11 +78,11 @@ class BankController extends Controller
     }
     /// edit bank 
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
 
         $bankId = request("id");
-
+        return "hi";
         $BankListExist = Bank::where(
             [
                 ['id', $id],
@@ -113,5 +114,4 @@ class BankController extends Controller
             'data' => $BankListExist
         ]);
     }
-
 }

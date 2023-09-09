@@ -13,5 +13,7 @@ class Bank extends Model
 {
     use HasFactory;
     use Searchable;
+    
+    protected $table = 'banks';
     protected $guarded = [];
 }
