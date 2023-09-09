@@ -15,7 +15,7 @@ class AddFieldPersonChats extends Migration
     public function up()
     {
         Schema::table('person_chats', function (Blueprint $table) {
-            $table->timestamp('lasted_at')->nullable()->default(DB::raw('CURRENT_TIMESTAMP'))->after('is_helper');
+            $table->timestamp('lasted_at')->nullable()->default(DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

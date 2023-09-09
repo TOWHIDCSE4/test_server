@@ -42,9 +42,6 @@ class CreateContractsTable extends Migration
                 $table->timestamp('deposit_payment_date')->nullable();
                 $table->timestamp('deposit_used_date')->nullable();
                 $table->double('deposit_actual_paid')->nullable();
-                $table->string('cmnd_number')->nullable();
-                $table->string('cmnd_front_image_url')->nullable();
-                $table->string('cmnd_back_image_url')->nullable();
 
                 $table->timestamps();
             });

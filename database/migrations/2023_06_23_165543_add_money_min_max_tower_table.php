@@ -14,8 +14,8 @@ class AddMoneyMinMaxTowerTable extends Migration
     public function up()
     {
         Schema::table('towers', function (Blueprint $table) {
-            $table->double('min_money')->nullable()->default(0)->after('money');
-            $table->double('max_money')->nullable()->default(0)->after('min_money');
+            // $table->double('min_money')->nullable()->default(0)->after('money');
+            // $table->double('max_money')->nullable()->default(0)->after('min_money');
         });
     }
 
