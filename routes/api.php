@@ -650,16 +650,16 @@ Route::middleware(["mid_res"])
 
             Route::get('/getAllTower/{userId}', 'App\Http\Controllers\Api\User\Manage\TowerController@getUserWiseAllTower')->middleware('user_auth', 'permission_admin');
             Route::post('/update-towetmotel-byroom', 'App\Http\Controllers\Api\User\Manage\TowerMotelController@updateTowerByRoom')->middleware('user_auth', 'permission_admin');
-           
+
             Route::post('/user/community/person_chat', 'App\Http\Controllers\Api\Admin\AdminMessageController@getLatestMessage')->middleware('user_auth', 'permission_admin');
             Route::get('/getRenterByUserid/{userId}', 'App\Http\Controllers\Api\Admin\RenterController@getRenterByUserid')->middleware('user_auth', 'permission_admin');
             Route::get('/getMasterByUserid/{userId}', 'App\Http\Controllers\Api\Admin\RenterController@getMasterByUserid')->middleware('user_auth', 'permission_admin');
-           
+
             Route::post('/addBank', 'App\Http\Controllers\Api\Admin\WalletTransactionController@addBank')->middleware('user_auth', 'permission_admin');
             Route::get('/editBank/{bankId}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@editBank')->middleware('user_auth', 'permission_admin');
-        
+
             Route::post('/addBank', 'App\Http\Controllers\BankController@addBank')->middleware('user_auth');
-            Route::put('/editBankInfo/{bankId}', 'App\Http\Controllers\BankController@update')->middleware('user_auth');
+            Route::resource('banks', App\Http\Controllers\BankController::class)->middleware('user_auth');
             Route::get('/getUserBankListbyUserId/{user_id}', 'App\Http\Controllers\BankController@getUserBankListbyUserId')->middleware('user_auth');
         });
     });
@@ -669,8 +669,8 @@ Route::post('deposit', 'App\Http\Controllers\Api\DepositController@index');
 
 //Withdrow
 
-Route::post('/refunds-create' ,'App\Http\Controllers\Api\PaymentMethod\NinePayController@refundCreate');
-Route::get('get/invoice/inquire','App\Http\Controllers\Api\PaymentMethod\NinePayController@invoiceInquire');
-Route::post('/payments-create','App\Http\Controllers\Api\PaymentMethod\NinePayController@paymentCreate');
-Route::post('/inquire','App\Http\Controllers\Api\PaymentMethod\NinePayController@inquire');
-Route::get('/result','App\Http\Controllers\Api\PaymentMethod\NinePayController@result');
+Route::post('/refunds-create', 'App\Http\Controllers\Api\PaymentMethod\NinePayController@refundCreate');
+Route::get('get/invoice/inquire', 'App\Http\Controllers\Api\PaymentMethod\NinePayController@invoiceInquire');
+Route::post('/payments-create', 'App\Http\Controllers\Api\PaymentMethod\NinePayController@paymentCreate');
+Route::post('/inquire', 'App\Http\Controllers\Api\PaymentMethod\NinePayController@inquire');
+Route::get('/result', 'App\Http\Controllers\Api\PaymentMethod\NinePayController@result');
