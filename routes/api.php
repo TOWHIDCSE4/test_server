@@ -661,6 +661,8 @@ Route::middleware(["mid_res"])
             Route::post('/addBank', 'App\Http\Controllers\BankController@addBank')->middleware('user_auth');
             Route::resource('banks', App\Http\Controllers\BankController::class)->middleware('user_auth');
             Route::get('/getUserBankListbyUserId/{user_id}', 'App\Http\Controllers\BankController@getUserBankListbyUserId')->middleware('user_auth');
+            Route::get('/getAllWalletDeposit/{user_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletDepositbyUserId')->middleware('user_auth');
+            Route::get('/getAllWalletWithdraw/{user_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletWithdrawUserId')->middleware('user_auth');
         });
     });
 

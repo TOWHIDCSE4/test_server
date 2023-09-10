@@ -266,6 +266,7 @@ class WalletTransactionController extends Controller
             'data' => $wallet_transaction,
         ]);
     }
+
     public function editBank(Request $request, $bankId)
     {
         if ($bankId == null || empty($bankId)) {
@@ -303,5 +304,47 @@ class WalletTransactionController extends Controller
             'msg' => MsgCode::SUCCESS[1],
             'data' => $wallet_transaction,
         ]);
+    }
+
+    public function getAllWalletDepositbyUserId($userId)
+    {
+        $deposits = WalletTransaction::where('user_id', $userId)->select(
+            'user_id',
+            'deposit_money',
+            'account_number',
+            'bank_account_holder_name',
+            'bank_name',
+            'deposit_trading_code',
+            'deposit_date_time',
+            'deposit_content'
+        )->paginate(10);
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $deposits,
+        ], 200);
+    }
+
+    public function getAllWalletWithdrawUserId($userId)
+    {
+        $withdrows = WalletTransaction::where('user_id', $userId)->select(
+            'user_id',
+            'deposit_money',
+            'account_number',
+            'bank_account_holder_name',
+            'bank_name',
+            'deposit_trading_code',
+            'deposit_date_time',
+            'deposit_content'
+        )->paginate(10);
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $withdrows,
+        ], 200);
     }
 }
