@@ -32,7 +32,7 @@ class WalletTransactionController extends Controller
             'deposit_trading_code',
             'deposit_date_time',
             'deposit_content'
-        )->get();
+        )->paginate(10);
         return response()->json([
             'code' => 200,
             'success' => true,
@@ -146,7 +146,7 @@ class WalletTransactionController extends Controller
             'withdraw_trading_code',
             'withdraw_date_time',
             'withdraw_content'
-        )->get();
+        )->paginate(10);
         return response()->json([
             'code' => 200,
             'success' => true,
