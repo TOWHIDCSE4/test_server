@@ -181,7 +181,7 @@ class TowerMotelController extends Controller
         }
 
         $TowerMotel_is_room->update([
-            'is_room' => $request->is_room != null ? $request->is_room : $TowerMotel_is_room->is_room,
+            'status' => $request->status != null ? $request->status : $TowerMotel_is_room->status,
         ]);
         return ResponseUtils::json([
             'code' => Response::HTTP_OK,
