@@ -336,19 +336,12 @@ class MoPostRoommateController extends Controller
         $adminVerified = 0;
         $statusPost = 0;
 
-        if ($request->motel_id == null) {
-            return ResponseUtils::json([
-                'code' => Response::HTTP_BAD_REQUEST,
-                'success' => false,
-                'msg_code' => MsgCode::MOTEL_IS_REQUIRED[0],
-                'msg' => MsgCode::MOTEL_IS_REQUIRED[1],
-            ]);
-        }
+       
 
         $checkRenterHasContract = DB::table('contracts')
             ->join('user_contracts', 'contracts.id', '=', 'user_contracts.contract_id')
             ->where([
-                ['contracts.motel_id', $request->motel_id],
+               
                 ['contracts.status', StatusContractDefineCode::COMPLETED],
                 ['user_contracts.renter_phone_number', $request->user->phone_number]
             ])->first();
@@ -362,7 +355,7 @@ class MoPostRoommateController extends Controller
             ]);
         }
 
-        if (DB::table('mo_post_roommates')->where([['motel_id', $request->motel_id], ['user_id', $request->user->id]])->count() >= 1) {
+        if (DB::table('mo_post_roommates')->where([['user_id', $request->user->id]])->count() >= 1) {
             return ResponseUtils::json([
                 'code' => Response::HTTP_BAD_REQUEST,
                 'success' => false,
