@@ -663,6 +663,8 @@ Route::middleware(["mid_res"])
             Route::get('/getUserBankListbyUserId/{user_id}', 'App\Http\Controllers\BankController@getUserBankListbyUserId')->middleware('user_auth');
             Route::get('/getAllWalletDeposit/{user_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletDepositbyUserId')->middleware('user_auth');
             Route::get('/getAllWalletWithdraw/{user_id}', 'App\Http\Controllers\Api\Admin\WalletTransactionController@getAllWalletWithdrawUserId')->middleware('user_auth');
+
+            Route::get('/wallet-data-for-graph', 'App\Http\Controllers\Api\Admin\WallentTransactionAdminReviewController@getAdminReview');
         });
     });
 
